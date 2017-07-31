@@ -1,6 +1,6 @@
 # Reading notes for *Fluent Python*
----
-## ** Week1 **
+
+## Week1
 
 Python Data Model
 
@@ -45,7 +45,7 @@ OR
 Card('Q', 'hearts') in deck
 ```
 
-#### str * vs * repr
+#### str  vs  repr
 
 The ``__repr__`` special method is called by the repr built-in to get string representation of the object for inspection. If we did not implement ``__repr__``, vector instances would be shown in the console like ``<Vector object at 0x10e100070>``.
 
