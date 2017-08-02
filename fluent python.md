@@ -153,3 +153,75 @@ City(name='Tokyo', country='JP', population=36.933, coordinates=(35.689722, 139.
 * ``_asdict()`` returns a ``collections.OrderedDict`` built from the named tuple instance.
 
 all list methods that do not involve adding or removing items are supported by tuple with one exception — tuple lacks the ``__reversed__`` method, but that is just for optimization; ``reversed(my_tuple)`` works without it.
+
+
+Slicing:
+
+* the length of a slice or range, the stop position is given: range(3) and my_list[:3]
+* the lenght of a slice or range, the start and stop are given: stop - start
+* without overlapping:
+```Python
+  l=[10,20,30,40,50,60]
+  l[:2] # split at 2
+  >>> [10, 20]
+  l[2:] # from 2
+  >>> [30, 40, 50, 60]
+```
+
+[a::b]
+from a, each step b
+```Python
+deck[12::13]
+>>> [Card(rank='A', suit='spades'), Card(rank='A', suit='diamonds'), Card(rank='A', suit='clubs'), Card(rank='A', suit='hearts')]
+```
+
+``seq[start:stop:step]`` python actually call ``seq.__getitem__(slice(start, stop, step))``
+
+
+When the target of the assignment is a slice, the right-hand side must be an iterable object, even if it has just one item.
+```python
+l[2:5] = 100 --wrong
+l[2:5] = [100]
+```
+
+``+`` & ``*``
+
+Usually both operands of ``+`` must be of the same sequence type, and neither of them is modified but a new sequence of the same type is created as result of the concatenation.
+```python
+l=[1,2,3]
+l*5
+>>>[1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]
+```
+Both ``+`` and ``*`` always create a new object, and never change their operands.
+
+Augment assignment:
+
+The special method that makes ``+=`` work is ``__iadd__`` (for “in-place addition”). However, if ``__iadd__`` is not implemented, Python falls back to calling ``__add__``.
+
+```python
+t=(1,2,[30,40])
+t[2] += [50, 60]
+Traceback (most recent call last):
+File "<stdin>", line 1, in <module>
+TypeError: 'tuple' object does not support item assignment
+
+>>> t
+(1, 2, [30, 40, 50, 60])
+```
+
+[PythonTutor](http://www.pythontutor.com)
+
+* Putting mutable items in tuples is not a good idea.
+* Augmented assignment is not an atomic operation.
+* Inspecting Python bytecode is not too difficult, and is often helpful to see what is going on under the hood.
+
+
+``list.sort`` and ``sorted`` built-in function
+
+The ``list.sort`` method sorts a list in-place, that is, without making a copy. It returns None to remind us that it changes the target object, and does not create a new list. Same as random.shuffle function.
+
+In contrast, the built-in function ``sorted`` creates a new list and returns it. In fact, sorted accepts any iterable object as argument, including immutable sequences and generators. Regardless of the type of iterable given to sorted, it always returns a newly created list.
+
+Both ``list.sort`` and ``sorted`` take two optional, keyword-only arguments: key and reverse.
+* reverse
+* key
