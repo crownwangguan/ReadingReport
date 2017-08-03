@@ -104,6 +104,8 @@ symbols = '$¢£¥€¤'
 tuple(ord(symbol) for symbol in symbols)
 ```
 
+[generator vs list comprehensions](https://www.codementor.io/djangostars/python-list-comprehensions-generator-expressions-6dnzuh12c)
+
 __Tuple:__
 
 ``_`` used as place holder
@@ -225,3 +227,97 @@ In contrast, the built-in function ``sorted`` creates a new list and returns it.
 Both ``list.sort`` and ``sorted`` take two optional, keyword-only arguments: key and reverse.
 * reverse
 * key
+
+
+__bisect__
+
+``bisect(haystack, needle)`` does a ``binary search`` for ``needle`` in ``haystack`` — which must be a ``sorted sequence`` — to locate the position where needle can be inserted while maintaining haystack in ``ascending order``. In other words, all items appearing up to that position are less or equal to needle.
+
+```Python
+def grade(score, breakpoints=[60, 70, 80, 90], grades='FDCBA'):
+  i = bisect.bisect(breakpoints, score)
+  return grades[i]
+
+[grade(score) for score in [33, 99, 77, 70, 89, 90, 100]]
+>>> ['F', 'A', 'C', 'C', 'B', 'A', 'A']
+```
+
+``insort(seq, item)`` inserts ``item`` into ``seq`` so as to keep seq in ascending order.
+
+```Python
+import bisect
+import random
+
+SIZE=7
+random.seed(1729)
+my_list = []
+
+for i in range(SIZE):
+    new_item = random.randrange(SIZE*2)
+    bisect.insort(my_list, new_item)
+    print('%2d ->' % new_item, my_list)
+```
+
+__Recommand__
+
+*  if need to store 10 million of floating point values an ``array`` is much more efficient, because an array does not actually hold full-fledged float objects, but only the packed bytes representing their machine values
+
+*  if constantly adding and removing items from the ends of a list as a FIFO or LIFO data structure, a ``deque`` (double-ended queue) works faster.
+
+* If code does a lot of containment checks — e.g. ``item in my_col lection``, consider using a ``set`` for my_collection, especially if it holds a large number of items. Sets are optimized for fast membership checking. But they are not sequences
+
+##### Array:
+To list of numbers, use ``array.array``. Supports all mutable sequence operations (including ``.pop``, ``.insert`` and ``.extend``), and additional methods for fast loading and saving such as ``.frombytes`` and ``.tofile``.
+
+__Numpy:__
+NumPy implements multi-dimensional, homogeneous arrays and matrix types that hold not only numbers but also user defined records, and provides efficient elementwise operations.
+
+__Scipy:__
+SciPy is a library, written on top of NumPy, offering many scientific computing algorithms from linear algebra, numerical calculus and statistics.
+
+
+```Python
+>>> import numpy
+>>> a = numpy.arange(12)
+>>> a
+array([ 0, 1, 2, 3, 4, 5, 6, >>> type(a)
+<class 'numpy.ndarray'>
+>>> a.shape
+(12,)
+>>> a.shape = 3, 4
+>>> a
+array([[ 0, 1, 2, 3],
+[ 4, 5, 6, 7],
+[ 8, 9, 10, 11]]) >>> a[2]
+array([ 8,  9, 10, 11])
+>>> a[2, 1]
+9
+>>> a[:, 1] array([1, 5, 9])
+>>> a.transpose() array([[ 0, 4, 8],
+       [ 1,  5,  9],
+       [ 2,  6, 10],
+       [ 3,  7, 11]])
+```
+
+__Deque:__
+
+The ``.append`` and ``.pop`` methods make a list usable as a stack or a queue (if you use .append and .pop(0), you get LIFO behavior). But inserting and removing from the left of a list (the 0-index end) is costly because the entire list must be shifted.
+
+The class ``collections.deque`` is a thread-safe double-ended queue designed for fast inserting and removing from both ends.
+
+```Python
+from collections import deque
+dq = deque(range(10), maxlen=10)
+dq.rotate(3)
+>>> deque([7, 8, 9, 0, 1, 2, 3, 4, 5, 6], maxlen=10)
+dq.rotate(-4)
+>>> deque([1, 2, 3, 4, 5, 6, 7, 8, 9, 0], maxlen=10)
+dq.appendleft(-1)
+>>> deque([-1, 1, 2, 3, 4, 5, 6, 7, 8, 9], maxlen=10)
+dq.extend([11, 22, 33])
+>>> deque([3, 4, 5, 6, 7, 8, 9, 11, 22, 33], maxlen=10)
+dq.extendleft([10, 20, 30, 40])
+>>> deque([40, 30, 20, 10, 3, 4, 5, 6, 7, 8], maxlen=10)
+```
+
+*The append and popleft operations are atomic, so deque is safe to use as a LIFO-queue in multi-threaded applications without the need for using locks.*
