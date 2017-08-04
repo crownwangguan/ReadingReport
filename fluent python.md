@@ -321,3 +321,32 @@ dq.extendleft([10, 20, 30, 40])
 ```
 
 *The append and popleft operations are atomic, so deque is safe to use as a LIFO-queue in multi-threaded applications without the need for using locks.*
+
+
+
+### Dict
+
+The built-in functions live in`` __builtins__.__dict__``.
+``Hash tables`` are the engines behind Python’s high performance dicts.
+
+python 3
+``collections.abc`` provides abstract base classes that can be used to test whether a class provides a particular interface; for example, whether it is hashable or whether it is a mapping.
+
+All mapping types in the standard library use the basic ``dict`` in their implementation, so they share the limitation that the ``keys`` must be ``hashable`` (the values need not be hashable, only the keys).
+
+*What is Hashable*
+
+An object is ``hashable`` if it has a ``hash`` value which never changes during its lifetime (it needs a ``__hash__()`` method), and can be compared to other objects (it needs an ``__eq__()`` method). Hashable objects which compare equal must have the same hash value.
+
+The atomic immutable types (``str``, ``bytes``, ``numeric types``) are all hashable. A ``frozen set`` is always hashable, because its elements must be hashable by definition. A ``tuple`` is hashable only if all its items are hashable.
+
+User-defined types are hashable by default because their hash value is their ``id()`` and they all compare not equal. If an object implements a custom ``__eq__`` that takes into account its internal state, it may be hashable only if all its attributes are immutable.
+
+How to build dict:
+```python
+>>> a = dict(one=1, two=2, three=3)
+>>> b = {'one': 1, 'two': 2, 'three': 3}
+>>> c = dict(zip(['one', 'two', 'three'], [1, 2, 3]))
+>>> d = dict([('two', 2), ('one', 1), ('three', 3)])
+>>> e = dict({'three': 3, 'one': 1, 'two': 2})
+```
