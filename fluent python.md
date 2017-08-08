@@ -350,3 +350,59 @@ How to build dict:
 >>> d = dict([('two', 2), ('one', 1), ('three', 3)])
 >>> e = dict({'three': 3, 'one': 1, 'two': 2})
 ```
+
+
+## Week2
+
+dict comprehensions
+```python
+DIAL_CODES = [
+  (86, 'China'),
+  (91, 'India'),
+  (1, 'United States'),
+  (62, 'Indonesia'),
+  (55, 'Brazil'),
+  (92, 'Pakistan'),
+  (880, 'Bangladesh'),
+  (234, 'Nigeria'),
+  (7, 'Russia'),
+  (81, 'Japan'),
+]
+
+country_code = {country: code for code, country in DIAL_CODES}
+```
+
+Handle missing key with setdefault:
+``index.setdefault(word, []).append(location).`` (Get the list of occurrences for word, or set it to [] if not found; setdefault returns the value, so it can be updated without requiring a second search.)
+
+
+Mapping with flexible key lookup:
+
+* defaultdict:
+
+  For example, given an empty defaultdict created as dd = defaultdict(list), if 'new-key' is not in dd then the expression dd['new-key'] does the following steps:
+  1. calls list() to create a new list;
+  2. inserts the list into dd using 'new-key' as key;
+  3. returns a reference to that list.
+
+* subclassing userdict:
+
+  Note that UserDict does not inherit from dict, but has an internal dict instance, called data, which holds the actual items.
+
+  ```Python
+  import collections
+
+  class StrKeyDict(collections.UserDict):
+
+    def __missing__(self, key):
+      if isinstance(key, str):
+        raise KeyError(key) return self[str(key)]
+
+    def __contains__(self, key):
+      return str(key) in self.data
+
+    def __setitem__(self, key, item):
+      self.data[str(key)] = item
+  ```
+
+  [dict vs userdict](https://stackoverflow.com/questions/7148419/subclass-dict-userdict-dict-or-abc)
