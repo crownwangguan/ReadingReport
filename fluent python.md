@@ -406,3 +406,23 @@ Mapping with flexible key lookup:
   ```
 
   [dict vs userdict](https://stackoverflow.com/questions/7148419/subclass-dict-userdict-dict-or-abc)
+
+
+immutable mapping
+
+The mapping types provided by the standard library are all mutable, but you may need to guarantee that a user cannot change a mapping by mistake. Updates to the original mapping can be seen in the mappingproxy, but changes cannot be made through it.
+
+```Python
+>>> from types import MappingProxyType >>>d={1:'A'}
+>>> d_proxy = MappingProxyType(d)
+>>> d_proxy
+mappingproxy({1: 'A'})
+>>> d_proxy[1]
+'A'
+>>> d_proxy[2] = 'x'
+Traceback (most recent call last):
+File "<stdin>", line 1, in <module>
+TypeError: 'mappingproxy' object does not support item assignment >>> d[2] = 'B'
+>>> d_proxy
+mappingproxy({1: 'A', 2: 'B'})
+```
