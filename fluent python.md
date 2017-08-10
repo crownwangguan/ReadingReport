@@ -426,3 +426,91 @@ TypeError: 'mappingproxy' object does not support item assignment >>> d[2] = 'B'
 >>> d_proxy
 mappingproxy({1: 'A', 2: 'B'})
 ```
+
+Set:
+
+A set is a collection of unique objects.
+```Python
+>>>l = ['spam', 'spam', 'eggs', 'spam']
+>>>set(l)
+>>>{'eggs', 'spam'}
+```
+Set elements must be hashable. The ``set`` type is not hashable, but ``frozenset`` is
+
+Given two sets a and b, ``a | b`` returns their union, ``a & b`` computes the intersection, and ``a - b`` the difference.
+```Python
+found = len(set(needles) & set(haystack))
+
+vs
+
+found = 0
+for n in needles:
+  if n in haystack:
+    found += 1
+```
+
+Set literals:
+
+quicker than set(list)
+
+Don’t forget: to create an ``empty set``, use the constructor without an argument: ``set()``. If you write ``{}``, you’re creating an empty ``dict`` — this hasn’t changed.
+
+```Python
+>>> s={1, 2, 3}
+>>> type(s) <class 'set'>
+>>> s
+{1, 2, 3}
+```
+
+check bytecode for {1} and set([1])
+
+```Python
+>>> from dis import dis
+>>> dis('{1}')
+      1           0 LOAD_CONST
+                  3 BUILD_SET
+                  6 RETURN_VALUE
+>>> dis('set([1])')
+      1           0 LOAD_NAME
+                  3 LOAD_CONST
+                  6 BUILD_LIST
+                  9 CALL_FUNCTION
+                 12 RETURN_VALUE
+```
+
+
+Set comprehensions:
+
+```Python
+>>> from unicodedata import name
+>>> {chr(i) for i in range(32, 256) if 'SIGN' in name(chr(i),'')}
+{'§', '=', '¢', '#', '¤', '<', '¥', 'μ', '×', '$', '¶', '£', '©', '°', '+', '÷', '±', '>', '¬', '®', '%'}
+```
+
+Dict and Set in python use hashtable:
+
+A hash table is a sparse array, i.e. an array which always has empty cells. In standard data structure texts, the cells in a hash table are often called “buckets”. In a dict hash table, there is a bucket for each item, and it contains two fields: a reference to the key and a reference to the value of the item. Because all buckets have the same size, access to an individual bucket is done by offset.
+
+Python tries to keep at least 1/3 of the buckets empty; if the hash table becomes too crowded, it is copied to a new location with room for more buckets.
+
+To put an item in a hash table the first step is to calculate the hash value of the item key, which is done with the hash() built-in function
+
+
+Hashes and equality
+
+The ``hash()`` built-in function works directly with built-in types and falls back to calling ``__hash__`` for user-defined types. If two objects compare equal, their hash values must also be equal, otherwise the hash table algorithm does not work.
+
+
+The hash table algorithm
+
+To fetch the value at ``my_dict[search_key]``, Python calls ``hash(search_key)`` to obtain the hash value of search_key and uses the least significant bits of that number as an offset to look up a bucket in the hash table (the number of bits used depends on the current size of the table). If the found bucket is empty, KeyError is raised. Otherwise, the found bucket has an item — a ``found_key:found_value`` pair — and then Python checks whether ``search_key == found_key``. If they match, that was the item sought: ``found_value`` is returned.
+
+However, if search_key and found_key do not match, this is a ``hash collision``. This happens because a hash function maps arbitrary objects to a small number of bits, and — in addition — the hash table is indexed with a subset of those bits. To resolve the collision, the algorithm then takes different bits in the hash, massages them in a particular way and uses the result as an offset to look up a different bucket8. If that is empty,    ``KeyError is raised``; if not, either the keys match and the item value is returned, or the collision resolution process is repeated.
+
+dict:
+
+* Keys must be hashable objects
+* dicts have significant memory overhead
+* Key search is very fast
+* Key ordering depends on insertion order
+* Adding items to a dict may change the order of existing keys
