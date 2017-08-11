@@ -514,3 +514,10 @@ dict:
 * Key search is very fast
 * Key ordering depends on insertion order
 * Adding items to a dict may change the order of existing keys
+
+
+
+## Decorator:
+[Decorator introduction](https://www.thecodeship.com/patterns/guide-to-python-function-decorators/)
+
+[How Flask use decorator to demonstrate](http://flask.pocoo.org/snippets/129/)
