@@ -521,3 +521,103 @@ dict:
 [Decorator introduction](https://www.thecodeship.com/patterns/guide-to-python-function-decorators/)
 
 [How Flask use decorator to demonstrate](http://flask.pocoo.org/snippets/129/)
+
+
+Encode and decode:
+
+bytes -> string (read content from text (decode))
+string -> bytes (write to text (encode))
+
+
+## Function:
+
+modern replacements for map, filter and reduce
+
+with the list comprehensions and generator expression:
+  (Python3 map and filter return generators)
+```python
+list(map(fact, range(6)))
+==>
+[fact(n) for n in range(6)]
+----------------------------------------
+list(map(factorial, filter(lambda n: n % 2, range(6))))
+==>
+[factorial(n) for n in range(6) if n % 2]
+----------------------------------------
+from functools import reduce
+from operator import add
+
+reduce(add, range(100))
+==>
+sum(range(100))
+```
+
+** Lambda **:
+```python
+fruits = ['a', 'b', 'c', 'd']
+sorted(fruits, key=lambda word: word[::-1])
+```
+
+Callable objects:
+
+* user-defined function:
+created with ``def`` statements or ``lambda`` expressions
+* built-in function:
+a function implemented in C, like ``len`` or ``time.strftime``
+* built-in methods:
+methods implemented in C, like ``dict.get``
+* methods:
+functions defined in the body of a class
+* classes:
+when invoded, a class runs its ``__new__`` to create an instance, then ``__init__`` to initialize
+* instances:
+if a class defines a ``__call__`` method, instance maybe invoked as functions
+* generator function:
+``yield`` keyword, generator function return a generator object
+
+User defined callable types:
+
+python objects behave like functions:
+```python
+import random
+
+class BingoCage:
+  def __init__(self, items):
+    self._items = list(items)
+    random.shuffle(self._items)
+
+  def pick(self):
+    try:
+      return self._items.pop()
+    except IndexError:
+      raise LookupError('pick from empty cage')
+
+  def __call__(self):
+    return self.pick()
+
+
+bingo = BingoCage(range(3))
+bingo.pick()
+>> 1
+bingo()
+>> 0
+```
+
+
+Positional to keyword-only parameters:
+
+``*`` and ``**`` to explode iterables and mappings into separate arguments
+
+```python
+def tag(name, *content, cls=None, **attrs):
+  if cls is not None:
+    attrs['class'] = cls
+  if attrs:
+    attr_str = ''.join(' %s="%s"' % (attr, value) for attr, value in sorted(attrs.items()))
+  else:
+    attr_str = ''
+  if content:
+    return '\n'.join('<%s%s>%s</%s>' % (name, attr_str, c, name) for c in content)
+  else:
+    return '<%s%s /> % (name, attr_str)
+```
