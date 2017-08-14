@@ -621,3 +621,70 @@ def tag(name, *content, cls=None, **attrs):
   else:
     return '<%s%s /> % (name, attr_str)
 ```
+
+** Annotation **:
+
+function annotation used to set pre-condition or validation for arguments.
+
+[Annotation useful](goo.gl/J5WYiW)
+
+
+** Functional programming: **
+
+``operator`` and ``functools`` module
+
+```Python
+from functools import reduce
+
+def fact(n):
+  return reduce(lambda a, b: a*b, range(1, n+1))
+
+==>
+from functools import reduce
+from operator import mul
+
+def fact(n):
+  return reduce(mul, range(1, n+1))
+```
+
+``itemgetter`` & ``attrgetter`` & ``methodcaller``
+
+itemgetter: common useage, soring a list of tuples by the value of one field
+``itemgetter(1)`` does the same as ``lambda fields: fields[1]``
+```Python
+metro_data = [
+('Tokyo', 'JP', 36.933, (35.689722, 139.691667)),
+('Delhi NCR', 'IN', 21.935, (28.613889, 77.208889)),
+('Mexico City', 'MX', 20.142, (19.433333, -99.133333)),
+('New York-Newark', 'US', 20.104, (40.808611, -74.020386)),
+('Sao Paulo', 'BR', 19.649, (-23.547778, -46.635833)), ... ]
+
+>>> from operator import itemgetter
+>>> for city in sorted(metro_data, key=itemgetter(1)):
+      print(city)
+```
+
+attrgetter: create functions to extract object attributes by name. pass several attribute names as arguments, it also returns a tuple of values
+
+```Python
+from operator import attrgetter
+
+name_lat = attrgetter('name', 'coord.lat')
+
+for city in sorted(metro_areas, key=attrgetter('coord.lat')):
+  print(name_lat(city))
+```
+
+methodcaller: creates calls a method by name on the object given as argument
+
+```python
+from operator import methodcaller
+
+s = 'The time has come'
+upcase = methodcaller('upper')
+upcase(s)
+```
+
+** functools.partial **
+
+[partial basic](https://www.pydanny.com/python-partials-are-fun.html)
