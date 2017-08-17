@@ -210,3 +210,73 @@ if want to use global variable, add ``global``
 9
 
 ```
+
+### Closure
+
+a closure is function that retains the bindings of the free variables that exist when the function is defined, so that they can be used later when the function is invoked and the defining scope is no longer available
+
+```python
+def make_averager():
+  series = []
+
+  def averager(new_value):
+    series.append(new_value)
+    total = sum(series)
+    return total/len(series)
+
+  return averager
+```
+Python keeps the names of local and free variables in the ``__code__`` attribute that represents the compiled body of the function:
+
+```python
+>>> avg.__code__.co_varnames
+('new_value', 'total')
+>>> avg.__code__.co_freevars
+('series',)
+```
+
+Each item in ``avg.__closure__`` corresponds to a name in ``avg.__code__.co_freevars``
+
+
+** nonlocal **
+
+```python
+def make_averager():
+  count = 0
+  total = 0
+
+  def averager(new_value):
+    count += 1
+    total += new_value
+    return total / count
+
+  return averager
+
+>>> avg = make_averager()
+>>> avg(10)
+Traceback (most recent call last):
+...
+UnboundLocalError: local variable 'count' referenced before assignment
+>>>
+```
+
+But with immutable types like numbers, strings, tuples etc., all you can is read, but never
+update. If you try to rebind them, as in count = count + 1, then you are implicitly
+creating a local variable count. It is no longer a free variable, therefore it is not saved in
+the closure.
+
+To solve, use nonlocal to flag a variable as a free variable even when it is assigned a new value within the function. If a new value is assigned to a nonlocal variable, the binding stored in the closure is changed.
+
+```python
+def make_averager():
+  count = 0
+  total = 0
+
+  def averager(new_value):
+    nonlocal count, total
+    count += 1
+    total += new_value
+    return total / count
+
+  return averager
+```
