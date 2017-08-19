@@ -280,3 +280,48 @@ def make_averager():
 
   return averager
 ```
+
+Stacked decorator:
+
+```python
+@d1
+@d2
+def f():
+  print('f')
+===>
+def f():
+  print('f')
+
+f = d1(d2(f))
+```
+
+** Parametrized decorator **
+
+to make it easy to enable or disable the function registration:
+
+```python
+registry = set()
+
+def register(active=True):
+  def decorate(func):
+    print('running register(active=%s)->decorate(%s)' % (active, func))
+    if active:
+      registry.add(func)
+    else:
+      registry.discard(func)
+    return func
+  return decorate
+
+@register(active=False)
+def f1():
+  print('running f1()')
+
+@register()
+def f2():
+  print('running f2()')
+
+def f3():
+  print('running f3()')
+
+register()(f3)
+```
