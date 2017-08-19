@@ -281,47 +281,98 @@ def make_averager():
   return averager
 ```
 
+** Decorator in standard library **
+
+* functools.lru_cache
+
+  It implements memoization: an optimization technique which works by saving the results of previous invocations of an expensive function, avoiding repeat computations on previously used arguments.
+
+  ```python
+  import functools
+
+  @functools.lru_cache()
+  def fibonacci(n):
+    if n<2:
+      return n
+    return fibonacci(n-2) + fibonacci(n-1)
+
+  if __name__=='__main__':
+      print(fibonacci(6))
+  ```
+
+* functools.singledispatch
+
+  If you decorate a plain function with ``@singledispatch`` it becomes a generic function: a group of functions to perform the same operation in different ways, depending on the type of the first argument
+
+  ```python
+  from functools import singledispatch
+  from collections import abc
+  import numbers
+  import html
+
+  @singledispatch
+  def htmlize(obj):
+    content = html.escape(repr(obj))
+    return '<pre>{}</pre>'.format(content)
+
+  @htmlize.register(str)
+  def _(text):
+    content = html.escape(text).replace('\n', '<br>\n')
+    return '<p>{0}</p>'.format(content)
+
+  @htmlize.register(numbers.Integral)
+  def _(n):
+    return '<pre>{0} (0x{0:x})</pre>'.format(n)
+
+  @htmlize.register(tuple)
+  @htmlize.register(abc.MutableSequence)
+  def _(seq):
+    inner = '</li>\n<li>'.join(htmlize(item) for item in seq)
+    return '<ul>\n<li>' + inner + '</li>\n</ul>'
+
+  ```
+
 Stacked decorator:
 
-```python
-@d1
-@d2
-def f():
-  print('f')
-===>
-def f():
-  print('f')
+  ```python
+  @d1
+  @d2
+  def f():
+    print('f')
+  ===>
+  def f():
+    print('f')
 
-f = d1(d2(f))
-```
+  f = d1(d2(f))
+  ```
 
-** Parametrized decorator **
+  ** Parametrized decorator **
 
-to make it easy to enable or disable the function registration:
+  to make it easy to enable or disable the function registration:
 
-```python
-registry = set()
+  ```python
+  registry = set()
 
-def register(active=True):
-  def decorate(func):
-    print('running register(active=%s)->decorate(%s)' % (active, func))
-    if active:
-      registry.add(func)
-    else:
-      registry.discard(func)
-    return func
-  return decorate
+  def register(active=True):
+    def decorate(func):
+      print('running register(active=%s)->decorate(%s)' % (active, func))
+      if active:
+        registry.add(func)
+      else:
+        registry.discard(func)
+      return func
+    return decorate
 
-@register(active=False)
-def f1():
-  print('running f1()')
+  @register(active=False)
+  def f1():
+    print('running f1()')
 
-@register()
-def f2():
-  print('running f2()')
+  @register()
+  def f2():
+    print('running f2()')
 
-def f3():
-  print('running f3()')
+  def f3():
+    print('running f3()')
 
-register()(f3)
-```
+  register()(f3)
+  ```
